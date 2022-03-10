@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %} Panier {% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center mt-4">
+            <div class="col-9">
+                {# Si la panier n'est pas vide et contient des produits on les affiche #}
+                {% if panier | length > 0  %}          
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col"> Photo </th>
+                                <th scope="col"> Libelle </th>
+                                <th scope="col"> Prix </th>
+                                <th scope="col"> Quantité </th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            {# ici on déclare la variable montantTotal danslaquelle on va sauvegarder la montant total de tous les produit de panier #}
+                            {% set montantTotal = 0 %} 
+                            
+                            {% for produit in panier %}
+                                <tr>
+                                    <td> <img src="/images/produits/{{produit.libelle}}.{{produit.photo}}" alt="produit"> </td>
+                                    <td> {{produit.libelle}} </td>
+                                    <td> {{produit.prix}} € </td>
+                                    <td> <input type="number" name="quantity" min="1" max="5" value="{{produit.quantite}}"> </td>
+                                    <td> <a href="{{path('deletePanier', {id:produit.id})}}"> <i class="fas fa-trash-alt" style="color:red"> Supprimer </i> </a> </td>
+                                    {# à chaque tour de la boucle for on additionne le montant de chaque produit #}
+                                    {% set montantTotal = montantTotal + (produit.prix * produit.quantite) %}   
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="row justify-content-end">
+                        <h5 class="d-inline"> Montant total : {{ montantTotal }}  </h5> 
+                        <button class="btn btn-success ml-3"> Valider </button>    
+                    </div>
+                {% else %}
+                    <div> <h3> Votre panier est vide </h3> </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+

@@ -1,0 +1,13 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}   
+    {{ form_label(form.cat_nom) }} 
+    {{ form_errors(form.cat_nom) }}
+    {{ form_widget(form.cat_nom) }}
+    {{ form_help(form.cat_nom) }}
+    <br>
+    {{ form_label(form.cat_photo) }} 
+    {{ form_errors(form.cat_photo) }}
+    {{ form_widget(form.cat_photo) }}
+    {{ form_help(form.cat_photo)}}
+    <br>
+    <button class="btn btn-primary"> {{ button_label|default('Save') }} </button>
+{{ form_end(form) }}

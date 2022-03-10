@@ -2,18 +2,161 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {# Responsive design #}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">    
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
+        {# Bootstrap 5.1.3 CDN via jsDelivr #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        {# CSS file #}
+        <link rel="stylesheet" href='/css/FilRouge.css'>
+        {# Font Awesome version 5 #}
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+        {% block stylesheets %}{% endblock %}
     </head>
+
     <body>
-        {% block body %}{% endblock %}
+        <main> 
+            {% block header %}
+                {# PAGE HEAD #}
+                <header> 
+                    {# Green Village Logo #}
+                    <div class="logo"> 
+                        <a href="{{ path('home') }}"> <img src="/images/header/logo village green.png"  alt="logo" class="logo-img"> </a> 
+                    </div>
+
+                    {# Hamburger icon #}
+                    <span id="hamburger_icon"> <i class="fas fa-bars fa-2x"></i> </span>
+
+                    {# Navigation Bars #}
+                    <div id="navbars">
+                        <nav class="navbar-1"> 
+                            <ul>
+                                <li> <a href="#"> Infos </a> </li>
+                                <li> 
+                                    {% if app.user %}
+                                        <div class="dropdown d-inline-block">
+                                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Salut {{ app.user.userPrenom }}  
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                                <li><a class="dropdown-item" href="#">Vos commandes</a></li>
+                                            </ul>
+                                        </div>
+                                    {% else %}   
+                                        <a href="{{ path('app_login')}}" id="espaceClient"> Espace client </a> 
+                                    {% endif %}
+                                </li>
+                                <li> 
+                                    <a href="{{ path('panier')}}"> 
+                                        <img src="/images/header/picto panier.png" alt="panier"> 
+                                        {% set TotalPanier = 0 %}
+                                        {% if app.session.get('panier') %}
+                                            {% for key, cpte in app.session.get('panier') %}
+                                                    {% set TotalPanier = TotalPanier + app.session.get('panier')[key]['quantite'] %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if TotalPanier >= 1 %}
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">{{ TotalPanier }}</span >
+                                        {% endif %}
+                                    </a> 
+                                </li>
+                                <li> <img src="/images/header/picto pays.png" alt="pays"> </li>
+                            </ul>
+                        </nav> 
+                    
+                        <nav class="navbar-2"> 
+                            <ul>
+                                <li> <a href="{{ path('categories_index') }}"> Produits </a> </li>
+                                <li> <a href="#"> Service </a> </li>
+                                <li> <a href="#"> Aide </a> </li>
+                                <li> <a href="#"> A propos </a> </li>
+                            </ul>
+                        </nav> 
+                        
+                        {% dump(categories) %}
+
+                        <nav class="navbar-3"> 
+                            <ul>
+                                <li> 
+                                    {% for catName in categories %}
+                                        <a href="{{ path('home2', {id:catName.id}) }}" class="dropDownMenu" id="Guitare"> {{ catName.catNom }} </a> 
+                                    
+                                        <div class="menuContent listeGuitare">
+                                            <ul>
+                                                {% if souscategories is defined %}
+                                                    {% for sousCat in souscategories %}
+                                                        <li> <a href="#"> {{ sousCat.sousCatNom }} </a> </li> <br>
+                                                        {# <li> <a href="#"> Guitares Classiques </a> </li> <br>
+                                                        <li> <a href="#"> Guitares Acoustiques & Electro-Acoustiques </a> </li> <br>
+                                                        <li> <a href="#"> Basses Electriques </a> </li> <br>
+                                                        <li> <a href="#"> Basses Acoustiques </a> </li> <br>
+                                                        <li> <a href="#"> Basses Semi-Acoustiques </a> </li> <br>
+                                                        <li> <a href="#"> Ukulélés </a> </li> <br>
+                                                        <li> <a href="#"> Autres instruments à cordes pincées </a> </li> #}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    {% endfor %}
+                                </li>
+
+                                
+                                {# <li> 
+                                    <a href="#" class="dropDownMenu" id="Batteries"> Batteries </a> 
+                                    <div class="menuContent listeBatterie">
+                                        <ul>
+                                            <li> <a href="#"> Batteries Electronique </a> </li> <br> 
+                                            <li> <a href="#"> Batteries Classiques </a> </li> <br>
+                                            <li> <a href="#"> Batteries Acoustique </a> </li> 
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li> 
+                                    <a href="#" class="dropDownMenu" id="Clavier"> Clavier </a> 
+                                    <div class="menuContent listeClavier">
+                                        <ul>
+                                            <li> <a href="#"> Claviers piano </a> </li> <br>
+                                            <li> <a href="#"> Claviers d'accordéon </a> </li>
+                                        </ul>                
+                                    </div>
+                                </li>
+                                <li> <a href="#"> Studio </a> </li>
+                                <li> <a href="#"> Sono </a> </li>
+                                <li> <a href="#"> Eclairage </a> </li>
+                                <li> <a href="#"> DJ </a> </li>
+                                <li> <a href="#"> Cases </a> </li>
+                                <li> <a href="#"> Accessories </a> </li> #}
+                            </ul>
+                        </nav>  
+                    </div>     
+                </header>
+                <div class="clearfix"></div>
+            {% endblock %}
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {# PAGE BODY #}
+            {% block body %}{% endblock %}
+
+            {# PAGE FOOT #}
+            {% block footer %} 
+                <footer>
+                    <img src="/images/footer/footer SIMPLE.png"  alt="footer">
+                </footer>
+            {% endblock %}
+        </main>
+
+        {# JavaScript file #}
+        <script src="/js/FilRouge.js"></script>
+        {% block javascripts %} {% endblock %}
     </body>
 </html>
